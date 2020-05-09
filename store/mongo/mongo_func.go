@@ -2,7 +2,7 @@ package mgo
 
 import (
 	"context"
-	"github.com/cbwfree/micro-core/fn"
+	"github.com/cbwfree/micro-core/conv"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -18,7 +18,7 @@ func SelectOne(col *mongo.Collection, filter interface{}, model reflect.Type, op
 		filter = bson.M{}
 	}
 
-	var one = fn.Elem(model).Addr().Interface()
+	var one = conv.Elem(model).Addr().Interface()
 	if err := col.FindOne(ctx, filter, options...).Decode(one); err != nil {
 		return nil, err
 	}
@@ -40,7 +40,7 @@ func SelectAll(col *mongo.Collection, filter interface{}, model reflect.Type, op
 		return nil, err
 	}
 
-	var rows = fn.ElemSlice(model)
+	var rows = conv.ElemSlice(model)
 	if err := cur.All(context.Background(), rows.Addr().Interface()); err != nil {
 		return nil, err
 	}
