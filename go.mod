@@ -1,6 +1,6 @@
 module github.com/cbwfree/micro-core
 
-go 1.14
+go 1.13
 
 require (
 	github.com/bsm/redislock v0.5.0
