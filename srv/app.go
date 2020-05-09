@@ -64,7 +64,7 @@ func (a *App) New(srvName string, flags ...[]cli.Flag) {
 			compile.EchoVersion(a.srv)
 
 			if a.opts.Dev {
-				log.Warn("the current startup mode is development mode")
+				log.Warnf("the current startup mode is development mode")
 			}
 
 			// 检查目录是否存在

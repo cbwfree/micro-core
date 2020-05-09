@@ -100,7 +100,7 @@ func (ca *Admin) NewTimer(name string, delay time.Duration, handler TimerHandler
 		}()
 
 		t.WaitExit()
-		log.Debug("[Timer][%s] is run finish ...", t.Name())
+		log.Debugf("[Timer][%s] is run finish ...", t.Name())
 
 		if len(exit) > 0 {
 			exit[0]()
@@ -129,7 +129,7 @@ func (ca *Admin) NewTicker(name string, interval time.Duration, handler TickerHa
 		}()
 
 		t.WaitExit()
-		log.Debug("[Ticker][%s] is run finish, executed %d, max execute: %d ...", t.Name(), t.NowNum(), t.MaxNum())
+		log.Debugf("[Ticker][%s] is run finish, executed %d, max execute: %d ...", t.Name(), t.NowNum(), t.MaxNum())
 
 		if len(exit) > 0 {
 			exit[0]()
@@ -158,7 +158,7 @@ func (ca *Admin) NewMaxTicker(name string, interval time.Duration, max int64, ha
 		}()
 
 		t.WaitExit()
-		log.Debug("[Ticker][%s] is run finish, executed %d, max execute: %d ...", t.Name(), t.NowNum(), t.MaxNum())
+		log.Debugf("[Ticker][%s] is run finish, executed %d, max execute: %d ...", t.Name(), t.NowNum(), t.MaxNum())
 
 		if len(exit) > 0 {
 			exit[0]()

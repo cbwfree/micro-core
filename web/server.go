@@ -84,7 +84,7 @@ func (s *Server) enableStatic() {
 		Browse: false, // 是否启用目录浏览
 	}))
 
-	log.Info("[%s] HTTP Server Enable Static Service, Link: %s", s.name, s.opts.StaticUri)
+	log.Infof("[%s] HTTP Server Enable Static Service, Link: %s", s.name, s.opts.StaticUri)
 }
 
 // 启用Session
@@ -97,7 +97,7 @@ func (s *Server) enableSession() {
 	store := filepath.Join(s.opts.Root, s.opts.SessionStore)
 	if !fn.ExistDir(store) {
 		if err := fn.MkDir(store, 0755); err != nil {
-			log.Fatal("Enable Web Session Error: %s", err)
+			log.Fatalf("Enable Web Session Error: %s", err)
 			return
 		}
 	}
@@ -106,7 +106,7 @@ func (s *Server) enableSession() {
 		sessions.NewFilesystemStore(store, []byte(DefaultSessionSecret)),
 	))
 
-	log.Info("[%s] HTTP Server Enable Session Service, Save: %s", s.name, store)
+	log.Infof("[%s] HTTP Server Enable Session Service, Save: %s", s.name, store)
 }
 
 // 启用WebSocket
@@ -152,7 +152,7 @@ func (s *Server) Start() error {
 		ch <- l.Close()
 	}()
 
-	log.Info("[%s] HTTP Server Listening on %v", s.name, l.Addr().String())
+	log.Infof("[%s] HTTP Server Listening on %v", s.name, l.Addr().String())
 
 	return nil
 }
@@ -170,7 +170,7 @@ func (s *Server) Close() error {
 	s.exit <- ch
 	s.running = false
 
-	log.Info("[%s] HTTP Server Close ... ", s.name)
+	log.Infof("[%s] HTTP Server Close ... ", s.name)
 
 	return <-ch
 }

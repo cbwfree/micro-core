@@ -39,7 +39,7 @@ func main() {
 
 	// 启动服务
 	if err := srv.Run(); err != nil {
-		log.Fatal("Run Error: %v", err)
+		log.Fatalf("Run Error: %v", err)
 	}
 }
 

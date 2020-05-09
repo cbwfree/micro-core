@@ -36,12 +36,12 @@ func (t *Timer) Run() {
 	t.timer = time.AfterFunc(t.delay, func() {
 		defer func() {
 			if err := recover(); err != nil {
-				log.Error("[Timer] the [%s] timer run panic: %s", t.name, err)
+				log.Errorf("[Timer] the [%s] timer run panic: %s", t.name, err)
 			}
 			t.Stop()
 		}()
 		if err := t.handler(t); err != nil {
-			log.Warn("[Timer] the [%s] timer run err: %s", t.name, err)
+			log.Warnf("[Timer] the [%s] timer run err: %s", t.name, err)
 		}
 	})
 }

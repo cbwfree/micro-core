@@ -154,7 +154,7 @@ func NewSocketConn(conn *websocket.Conn) *SocketConn {
 		s.isClose = true
 		s.Unlock()
 
-		log.Debug("[%s] SocketConn Write Chan is Closed ...", s.id)
+		log.Debugf("[%s] SocketConn Write Chan is Closed ...", s.id)
 	}()
 
 	return s

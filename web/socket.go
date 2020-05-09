@@ -52,19 +52,19 @@ func (s *Socket) Handler(c echo.Context) error {
 	sc := NewSocketConn(conn)
 	s.conns.Put(sc)
 
-	log.Debug("[%s][%s] successfully connected...", sc.Id(), sc.RemoteAddr().String())
+	log.Debugf("[%s][%s] successfully connected...", sc.Id(), sc.RemoteAddr().String())
 
 	// 接收消息处理
 	for {
 		// 接收消息
 		_, data, err := conn.ReadMessage()
 		if err != nil {
-			log.Error("[%s] Read Message Failure: %s", sc.Id(), err.Error())
+			log.Errorf("[%s] Read Message Failure: %s", sc.Id(), err.Error())
 			break
 		}
 
 		if err := s.onReceive(s, sc, data); err != nil {
-			log.Error("%s", err)
+			log.Errorf("%s", err)
 			break
 		}
 	}
@@ -74,7 +74,7 @@ func (s *Socket) Handler(c echo.Context) error {
 	s.conns.Del(sc.Id())     // 清理session
 	_ = s.onConnClose(s, sc) // 连接断开处理
 
-	log.Debug("[%s][%s] disconnected ...", sc.Id(), sc.RemoteAddr().String())
+	log.Debugf("[%s][%s] disconnected ...", sc.Id(), sc.RemoteAddr().String())
 
 	return nil
 }

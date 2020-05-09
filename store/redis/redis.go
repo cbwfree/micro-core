@@ -78,7 +78,7 @@ func (rs *Store) Connect() error {
 	// 启用分布式锁
 	rs.locker = redislock.New(rs.client)
 
-	log.Debug("Store [redis] Connect to %s", opts.Addr)
+	log.Debugf("Store [redis] Connect to %s", opts.Addr)
 
 	return nil
 }

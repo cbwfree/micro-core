@@ -101,7 +101,7 @@ func regFunc(tag string, translation string, override bool) validator.RegisterTr
 func tranFunc(ut ut.Translator, fe validator.FieldError) string {
 	t, err := ut.T(fe.Tag(), fe.Field())
 	if err != nil {
-		log.Warn("error translating FieldError: %#v", fe)
+		log.Warnf("error translating FieldError: %#v", fe)
 		return fe.(error).Error()
 	}
 	return t

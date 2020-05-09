@@ -58,7 +58,7 @@ func (t *Ticker) Run() {
 	go func() {
 		defer func() {
 			if err := recover(); err != nil {
-				log.Error("[Ticker][%d] the [%s] ticker run panic: %s", t.nowNum, t.name, err)
+				log.Errorf("[Ticker][%d] the [%s] ticker run panic: %s", t.nowNum, t.name, err)
 			}
 			t.exit <- true
 		}()
@@ -69,7 +69,7 @@ func (t *Ticker) Run() {
 				return
 			}
 			if err := t.handler(t); err != nil {
-				log.Warn("[Ticker][%d] the [%s] ticker run err: %s", t.nowNum, t.name, err)
+				log.Warnf("[Ticker][%d] the [%s] ticker run err: %s", t.nowNum, t.name, err)
 			}
 			if t.reload {
 				t.Stop()

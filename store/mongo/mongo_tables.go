@@ -69,7 +69,7 @@ func (mts *Tables) Check(mdb *Store) error {
 		return nil
 	}
 
-	log.Debug("[%s] check collections ...", mts.dbname)
+	log.Debugf("[%s] check collections ...", mts.dbname)
 
 	// 获取集合列表
 	names, err := mdb.ListCollectionNames(mts.dbname)
@@ -90,18 +90,18 @@ func (mts *Tables) Check(mdb *Store) error {
 				// 创建索引
 				if len(tab.index) > 0 {
 					if _, err := col.Indexes().CreateMany(sctx, tab.Index()); err != nil {
-						log.Error("create table [ %s ] index failure, error: %s", tab.name, err.Error())
+						log.Errorf("create table [ %s ] index failure, error: %s", tab.name, err.Error())
 					} else {
-						log.Info("init table [ %s ] index success. total: %d", tab.name, len(tab.index))
+						log.Infof("init table [ %s ] index success. total: %d", tab.name, len(tab.index))
 					}
 				}
 
 				// 初始化数据
 				if len(tab.data) > 0 {
 					if _, err := col.InsertMany(sctx, tab.data); err != nil {
-						log.Error("init table [ %s ] data failure, error: %s", tab.name, err.Error())
+						log.Errorf("init table [ %s ] data failure, error: %s", tab.name, err.Error())
 					} else {
-						log.Info("init table [ %s ] data success. total: %d", tab.name, len(tab.data))
+						log.Infof("init table [ %s ] data success. total: %d", tab.name, len(tab.data))
 					}
 				}
 
@@ -112,7 +112,7 @@ func (mts *Tables) Check(mdb *Store) error {
 	})
 
 	if len(tables) > 0 {
-		log.Info("[%s] successfully initialize %d table ...", mts.dbname, len(tables))
+		log.Infof("[%s] successfully initialize %d table ...", mts.dbname, len(tables))
 	}
 
 	return nil

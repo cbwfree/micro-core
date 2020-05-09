@@ -73,7 +73,7 @@ func (ms *Store) Connect() error {
 		return err
 	}
 
-	log.Debug("Store [mongodb] Connect to %s", ms.opts.RawUrl)
+	log.Debugf("Store [mongodb] Connect to %s", ms.opts.RawUrl)
 
 	return nil
 }
