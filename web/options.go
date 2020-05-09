@@ -56,21 +56,39 @@ func newOptions(opts ...Option) *Options {
 	return o
 }
 
-func WithAddr(addr string) Option {
+func InitAddr(addr string) Option {
 	return func(o *Options) {
 		o.Addr = addr
 	}
 }
 
-func WithTimeout(timeout int64) Option {
+func InitTimeout(timeout int64) Option {
 	return func(o *Options) {
 		o.Timeout = time.Duration(timeout) * time.Second
 	}
 }
 
-func WithRoot(root string) Option {
+func InitRoot(root string) Option {
 	return func(o *Options) {
 		o.Root = root
+	}
+}
+
+func InitStaticUri(uri string) Option {
+	return func(o *Options) {
+		o.StaticUri = uri
+	}
+}
+
+func InitStaticRoot(static string) Option {
+	return func(o *Options) {
+		o.StaticRoot = static
+	}
+}
+
+func InitAllowOrigins(allow []string) Option {
+	return func(o *Options) {
+		o.AllowOrigins = allow
 	}
 }
 
@@ -86,24 +104,6 @@ func WithSocket(path string, receive OnReceiveHandler, disconnect OnDisconnectHa
 		o.SocketPath = path
 		o.SocketOnReceive = receive
 		o.SocketOnDisconnect = disconnect
-	}
-}
-
-func WithStaticUri(uri string) Option {
-	return func(o *Options) {
-		o.StaticUri = uri
-	}
-}
-
-func WithStaticRoot(static string) Option {
-	return func(o *Options) {
-		o.StaticRoot = static
-	}
-}
-
-func WithAllowOrigins(allow []string) Option {
-	return func(o *Options) {
-		o.AllowOrigins = allow
 	}
 }
 

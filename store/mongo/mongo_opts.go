@@ -43,19 +43,19 @@ func newOptions(opts ...Option) *Options {
 	return o
 }
 
-func WithUri(uri string) Option {
+func InitUri(uri string) Option {
 	return func(o *Options) {
 		o.Uri = uri
 	}
 }
 
-func WithMinPoolSize(size uint64) Option {
+func InitMinPoolSize(size uint64) Option {
 	return func(o *Options) {
 		o.MinPoolSize = size
 	}
 }
 
-func WithMaxPoolSize(size uint64) Option {
+func InitMaxPoolSize(size uint64) Option {
 	return func(o *Options) {
 		o.MaxPoolSize = size
 	}

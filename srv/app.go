@@ -76,9 +76,9 @@ func (a *App) New(srvName string, flags ...[]cli.Flag) {
 
 			if a.Redis != nil {
 				a.Redis.With(
-					rds.WithUri(a.opts.RedisUrl),
-					rds.WithMinIdleConns(a.opts.RedisIdeConns),
-					rds.WithPoolSize(a.opts.RedisMaxPool),
+					rds.InitUri(a.opts.RedisUrl),
+					rds.InitMinIdleConns(a.opts.RedisIdeConns),
+					rds.InitPoolSize(a.opts.RedisMaxPool),
 				)
 				if err := a.Redis.Connect(); err != nil {
 					return err
@@ -87,9 +87,9 @@ func (a *App) New(srvName string, flags ...[]cli.Flag) {
 
 			if a.Mongo != nil {
 				a.Mongo.With(
-					mgo.WithUri(a.opts.MongoUrl),
-					mgo.WithMinPoolSize(a.opts.MongoMinPool),
-					mgo.WithMinPoolSize(a.opts.MongoMaxPool),
+					mgo.InitUri(a.opts.MongoUrl),
+					mgo.InitMinPoolSize(a.opts.MongoMinPool),
+					mgo.InitMaxPoolSize(a.opts.MongoMaxPool),
 				)
 				if err := a.Mongo.Connect(); err != nil {
 					return err
@@ -101,12 +101,12 @@ func (a *App) New(srvName string, flags ...[]cli.Flag) {
 		micro.AfterStart(func() error {
 			if a.Web != nil {
 				a.Web.With(
-					web.WithAddr(a.opts.HttpAddr),
-					web.WithTimeout(a.opts.HttpTimeout),
-					web.WithRoot(a.opts.Root),
-					web.WithStaticUri(a.opts.HttpStaticUri),
-					web.WithStaticRoot(a.opts.HttpStaticRoot),
-					web.WithAllowOrigins(a.opts.HttpAllowOrigin.Value()),
+					web.InitAddr(a.opts.HttpAddr),
+					web.InitTimeout(a.opts.HttpTimeout),
+					web.InitRoot(a.opts.Root),
+					web.InitStaticUri(a.opts.HttpStaticUri),
+					web.InitStaticRoot(a.opts.HttpStaticRoot),
+					web.InitAllowOrigins(a.opts.HttpAllowOrigin.Value()),
 				)
 				if err := a.Web.Start(); err != nil {
 					return err

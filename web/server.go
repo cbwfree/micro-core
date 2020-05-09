@@ -70,9 +70,8 @@ func (s *Server) enableStatic() {
 	}
 
 	var use func(mdd ...echo.MiddlewareFunc)
-	if s.opts.StaticUri == "" {
-		static := s.echo.Group(s.opts.StaticUri)
-		use = static.Use
+	if s.opts.StaticUri != "" && s.opts.StaticUri != "/" {
+		use = s.echo.Group(s.opts.StaticUri).Use
 	} else {
 		use = s.echo.Use
 	}
@@ -84,7 +83,13 @@ func (s *Server) enableStatic() {
 		Browse: false, // 是否启用目录浏览
 	}))
 
-	log.Infof("[%s] HTTP Server Enable Static Service, Link: %s", s.name, s.opts.StaticUri)
+	var uri string
+	if s.opts.StaticUri == "" {
+		uri = "/"
+	} else {
+		uri = s.opts.StaticUri
+	}
+	log.Infof("[%s] HTTP Server Enable Static Service, Uri: %s", s.name, uri)
 }
 
 // 启用Session
@@ -106,7 +111,7 @@ func (s *Server) enableSession() {
 		sessions.NewFilesystemStore(store, []byte(s.opts.SessionSecret)),
 	))
 
-	log.Infof("[%s] HTTP Server Enable Session Service, Save: %s", s.name, store)
+	log.Infof("[%s] HTTP Server Enable Session Service, Save Path: %s", s.name, store)
 }
 
 // 启用WebSocket
