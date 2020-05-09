@@ -5,10 +5,6 @@ import (
 	"time"
 )
 
-const (
-	DefaultSessionSecret = "SessionSecret" // 修改Session数据保存秘钥
-)
-
 var (
 	defaultAllowOrigins  = []string{"*"}
 	defaultAllowMethods  = []string{echo.GET, echo.PUT, echo.PATCH, echo.POST, echo.DELETE, echo.OPTIONS}
@@ -23,10 +19,14 @@ type Option func(o *Options)
 type Options struct {
 	Addr    string
 	Timeout time.Duration
+	Root    string // Disk Data Root Dir
 
-	Root         string // Disk Data Root Dir
-	SocketPath   string // WebSocket Uri Path
-	SessionStore string // Session Save Folder
+	SessionStore  string // Session Save Folder
+	SessionSecret string // Session Save Secret
+
+	SocketPath         string // WebSocket Uri Path
+	SocketOnReceive    OnReceiveHandler
+	SocketOnDisconnect OnDisconnectHandler
 
 	StaticUri     string
 	StaticRoot    string
@@ -74,15 +74,18 @@ func WithRoot(root string) Option {
 	}
 }
 
-func WithSocketPath(path string) Option {
+func WithSession(store string, secret string) Option {
 	return func(o *Options) {
-		o.SocketPath = path
+		o.SessionStore = store
+		o.SessionSecret = secret
 	}
 }
 
-func WithSessionStore(store string) Option {
+func WithSocket(path string, receive OnReceiveHandler, disconnect OnDisconnectHandler) Option {
 	return func(o *Options) {
-		o.SessionStore = store
+		o.SocketPath = path
+		o.SocketOnReceive = receive
+		o.SocketOnDisconnect = disconnect
 	}
 }
 

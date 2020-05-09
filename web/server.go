@@ -103,7 +103,7 @@ func (s *Server) enableSession() {
 	}
 
 	s.echo.Use(session.Middleware(
-		sessions.NewFilesystemStore(store, []byte(DefaultSessionSecret)),
+		sessions.NewFilesystemStore(store, []byte(s.opts.SessionSecret)),
 	))
 
 	log.Infof("[%s] HTTP Server Enable Session Service, Save: %s", s.name, store)
@@ -115,7 +115,7 @@ func (s *Server) enableSocket() {
 		return
 	}
 
-	s.socket = NewSocket(s, s.opts.SocketPath, s.opts.Timeout)
+	s.socket = NewSocket(s)
 	s.echo.GET(s.opts.SocketPath, s.socket.Handler)
 }
 

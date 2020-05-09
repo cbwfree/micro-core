@@ -9,20 +9,20 @@ import (
 	"time"
 )
 
-// Receive WebSocket Message Event
+// WebSocket Receive Message Event
 type OnReceiveHandler func(s *Socket, sess *SocketConn, data []byte) error
 
-// WebSocket Conn Close Event
-type OnConnCloseHandler func(s *Socket, sess *SocketConn) error
+// WebSocket Disconnect Event
+type OnDisconnectHandler func(s *Socket, sess *SocketConn) error
 
 type Socket struct {
-	wg          sync.WaitGroup
-	web         *Server             // Web Server
-	path        string              // WebSocket Path
-	upgrader    *websocket.Upgrader //
-	conns       *SocketConns
-	onReceive   OnReceiveHandler
-	onConnClose OnConnCloseHandler
+	wg           sync.WaitGroup
+	web          *Server             // Web Server
+	path         string              // WebSocket Path
+	upgrader     *websocket.Upgrader //
+	conns        *SocketConns
+	onReceive    OnReceiveHandler
+	onDisconnect OnDisconnectHandler
 }
 
 func (s *Socket) Web() *Server {
@@ -71,8 +71,8 @@ func (s *Socket) Handler(c echo.Context) error {
 
 	// 读消息失败后清理客户端
 	sc.Destroy()
-	s.conns.Del(sc.Id())     // 清理session
-	_ = s.onConnClose(s, sc) // 连接断开处理
+	s.conns.Del(sc.Id())      // 清理session
+	_ = s.onDisconnect(s, sc) // 连接断开处理
 
 	log.Debugf("[%s][%s] disconnected ...", sc.Id(), sc.RemoteAddr().String())
 
@@ -83,15 +83,17 @@ func (s *Socket) Close() {
 	s.conns.Clean()
 }
 
-func NewSocket(web *Server, path string, timeout time.Duration) *Socket {
+func NewSocket(web *Server) *Socket {
 	ws := &Socket{
 		web:   web,
-		path:  path,
+		path:  web.opts.SocketPath,
 		conns: newSocketConns(),
 		upgrader: &websocket.Upgrader{
-			HandshakeTimeout: timeout,
+			HandshakeTimeout: web.opts.Timeout,
 			CheckOrigin:      func(_ *http.Request) bool { return true },
 		},
+		onReceive:    web.opts.SocketOnReceive,
+		onDisconnect: web.opts.SocketOnDisconnect,
 	}
 	return ws
 }
