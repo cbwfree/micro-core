@@ -14,10 +14,10 @@ import (
 
 // set by build LD_FLAGS
 var (
-	name      = "ServiceName"   // 默认服务名称
-	version   = "latest"        // 默认版本号
-	revision  = ""              // Revision
-	buildTime = ""              // 默认编译时间
+	name      = "ServiceName" // 默认服务名称
+	version   = "latest"      // 默认版本号
+	revision  = ""            // Revision
+	buildTime = ""            // 默认编译时间
 )
 
 func SetName(n string) {

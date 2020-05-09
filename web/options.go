@@ -2,7 +2,6 @@ package web
 
 import (
 	"github.com/labstack/echo/v4"
-	"path/filepath"
 	"time"
 )
 
@@ -22,11 +21,12 @@ type Route func(e *echo.Group)
 type Option func(o *Options)
 
 type Options struct {
-	Addr          string
-	Timeout       time.Duration
-	EnableSocket  bool
-	EnableSession bool
-	SessionStore  string
+	Addr    string
+	Timeout time.Duration
+
+	Root         string // Disk Data Root Dir
+	SocketPath   string // WebSocket Uri Path
+	SessionStore string // Session Save Folder
 
 	StaticUri     string
 	StaticRoot    string
@@ -68,23 +68,21 @@ func WithTimeout(timeout int64) Option {
 	}
 }
 
-func WithEnableSocket(enable bool) Option {
+func WithRoot(root string) Option {
 	return func(o *Options) {
-		o.EnableSocket = enable
+		o.Root = root
 	}
 }
 
-func WithEnableSession(enable bool) Option {
+func WithSocketPath(path string) Option {
 	return func(o *Options) {
-		o.EnableSession = enable
+		o.SocketPath = path
 	}
 }
 
-func WithSessionStore(root string) Option {
+func WithSessionStore(store string) Option {
 	return func(o *Options) {
-		if root != "" {
-			o.SessionStore = filepath.Join(root, "_session")
-		}
+		o.SessionStore = store
 	}
 }
 

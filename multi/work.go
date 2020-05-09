@@ -3,9 +3,9 @@ package multi
 import (
 	"bytes"
 	"fmt"
-	"sync"
 	"github.com/cbwfree/micro-core/debug"
 	"github.com/micro/go-micro/v2/util/log"
+	"sync"
 	"time"
 )
 
@@ -30,7 +30,7 @@ func (w *Work) Do(work ...WorkHandler) {
 
 // 执行并发任务
 func (w *Work) Run(timeout ...time.Duration) error {
-	var trace =  new(bytes.Buffer)
+	var trace = new(bytes.Buffer)
 	var caller = debug.GetCaller(w.level)
 
 	w.Lock()

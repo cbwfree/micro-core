@@ -8,6 +8,7 @@ import (
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/micro/go-micro/v2/util/log"
 	"net"
+	"path/filepath"
 	"sync"
 )
 
@@ -19,10 +20,16 @@ type Server struct {
 
 	echo *echo.Echo
 	opts *Options
+
+	socket *Socket
 }
 
 func (s *Server) Echo() *echo.Echo {
 	return s.echo
+}
+
+func (s *Server) Socket() *Socket {
+	return s.socket
 }
 
 func (s *Server) With(opts ...Option) {
@@ -82,26 +89,34 @@ func (s *Server) enableStatic() {
 
 // 启用Session
 func (s *Server) enableSession() {
-	if !s.opts.EnableSession {
+	if s.opts.SessionStore == "" {
 		return
 	}
 
 	// 检查目录是否存在
-	if !fn.ExistDir(s.opts.SessionStore) {
-		if err := fn.MkDir(s.opts.SessionStore, 0755); err != nil {
+	store := filepath.Join(s.opts.Root, s.opts.SessionStore)
+	if !fn.ExistDir(store) {
+		if err := fn.MkDir(store, 0755); err != nil {
 			log.Fatal("Enable Web Session Error: %s", err)
 			return
 		}
 	}
 
 	s.echo.Use(session.Middleware(
-		sessions.NewFilesystemStore(
-			s.opts.SessionStore,
-			[]byte(DefaultSessionSecret),
-		),
+		sessions.NewFilesystemStore(store, []byte(DefaultSessionSecret)),
 	))
 
-	log.Info("[%s] HTTP Server Enable Session Service, Save: %s", s.name, s.opts.SessionStore)
+	log.Info("[%s] HTTP Server Enable Session Service, Save: %s", s.name, store)
+}
+
+// 启用WebSocket
+func (s *Server) enableSocket() {
+	if s.opts.SocketPath == "" {
+		return
+	}
+
+	s.socket = NewSocket(s, s.opts.SocketPath, s.opts.Timeout)
+	s.echo.GET(s.opts.SocketPath, s.socket.Handler)
 }
 
 func (s *Server) Start() error {
@@ -114,6 +129,7 @@ func (s *Server) Start() error {
 
 	s.enableCORS()      // 启用跨域
 	s.enableSession()   // 启用Session
+	s.enableSocket()    // 启用WebSocket
 	s.enableAPIRoutes() // 注册API路由
 	s.enableStatic()    // 启用静态文件
 

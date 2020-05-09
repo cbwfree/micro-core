@@ -2,10 +2,10 @@ package mgo
 
 import (
 	"context"
-	"go.mongodb.org/mongo-driver/mongo"
-	"sync"
 	"github.com/cbwfree/micro-core/fn"
 	"github.com/micro/go-micro/v2/util/log"
+	"go.mongodb.org/mongo-driver/mongo"
+	"sync"
 )
 
 // 数据库初始化

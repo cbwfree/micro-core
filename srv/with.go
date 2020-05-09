@@ -1,10 +1,10 @@
 package srv
 
 import (
-	"github.com/micro/go-micro/v2"
 	mgo "github.com/cbwfree/micro-core/store/mongo"
 	rds "github.com/cbwfree/micro-core/store/redis"
 	"github.com/cbwfree/micro-core/web"
+	"github.com/micro/go-micro/v2"
 )
 
 type WithAPP func(c *App)

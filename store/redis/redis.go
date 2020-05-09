@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"github.com/bsm/redislock"
 	"github.com/go-redis/redis/v7"
+	"github.com/micro/go-micro/v2/util/log"
 	"strconv"
 	"strings"
-	"github.com/micro/go-micro/v2/util/log"
 )
 
 var (

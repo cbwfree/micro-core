@@ -103,7 +103,7 @@ func (a *App) New(srvName string, flags ...[]cli.Flag) {
 				a.Web.With(
 					web.WithAddr(a.opts.HttpAddr),
 					web.WithTimeout(a.opts.HttpTimeout),
-					web.WithSessionStore(a.opts.Root),
+					web.WithRoot(a.opts.Root),
 					web.WithStaticUri(a.opts.HttpStaticUri),
 					web.WithStaticRoot(a.opts.HttpStaticRoot),
 					web.WithAllowOrigins(a.opts.HttpAllowOrigin.Value()),

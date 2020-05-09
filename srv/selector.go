@@ -14,7 +14,7 @@ func FilterNodeId(srvName, id string) selector.Filter {
 		var nodeId = fmt.Sprintf("%s-%s", srvName, id)
 
 		for _, service := range old {
-			serv := new(registry.Service)
+			srv := new(registry.Service)
 			var nodes []*registry.Node
 
 			for _, node := range service.Nodes {
@@ -26,9 +26,9 @@ func FilterNodeId(srvName, id string) selector.Filter {
 			// only add service if there's some nodes
 			if len(nodes) > 0 {
 				// copy
-				*serv = *service
-				serv.Nodes = nodes
-				services = append(services, serv)
+				*srv = *service
+				srv.Nodes = nodes
+				services = append(services, srv)
 			}
 		}
 
