@@ -51,7 +51,7 @@ import (
 	"github.com/go-playground/locales/zh"
 	"github.com/go-playground/universal-translator"
 	"github.com/labstack/echo/v4"
-	"github.com/micro/go-micro/v2/util/log"
+	log "github.com/micro/go-micro/v2/logger"
 	"gopkg.in/go-playground/validator.v9"
 	translations "gopkg.in/go-playground/validator.v9/translations/zh"
 	"net/http"

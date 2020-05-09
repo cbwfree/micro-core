@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"github.com/cbwfree/micro-core/debug"
-	"github.com/micro/go-micro/v2/util/log"
+	log "github.com/micro/go-micro/v2/logger"
 	"sync"
 	"time"
 )

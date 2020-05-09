@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"github.com/bsm/redislock"
 	"github.com/go-redis/redis/v7"
-	"github.com/micro/go-micro/v2/util/log"
+	log "github.com/micro/go-micro/v2/logger"
 	"strconv"
 	"strings"
 )

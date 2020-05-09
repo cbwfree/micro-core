@@ -3,7 +3,7 @@ package mgo
 import (
 	"context"
 	"github.com/cbwfree/micro-core/fn"
-	"github.com/micro/go-micro/v2/util/log"
+	log "github.com/micro/go-micro/v2/logger"
 	"go.mongodb.org/mongo-driver/mongo"
 	"sync"
 )

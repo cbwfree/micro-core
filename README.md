@@ -8,7 +8,7 @@ package main
 import (
 	"github.com/cbwfree/micro-core/srv"
 	"github.com/cbwfree/micro-core/web"
-	"github.com/micro/go-micro/v2/util/log"
+	log "github.com/micro/go-micro/v2/logger"
 )
 
 func main() {

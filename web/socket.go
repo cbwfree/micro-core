@@ -3,7 +3,7 @@ package web
 import (
 	"github.com/gorilla/websocket"
 	"github.com/labstack/echo/v4"
-	"github.com/micro/go-micro/v2/util/log"
+	log "github.com/micro/go-micro/v2/logger"
 	"net/http"
 	"sync"
 	"time"
