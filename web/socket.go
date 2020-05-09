@@ -6,7 +6,6 @@ import (
 	log "github.com/micro/go-micro/v2/logger"
 	"net/http"
 	"sync"
-	"time"
 )
 
 // WebSocket Receive Message Event
