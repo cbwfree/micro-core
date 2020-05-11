@@ -63,26 +63,26 @@ func (c *Context) SessionDo(closure func(*sessions.Session) interface{}) (interf
 	return res, nil
 }
 
-func (c *Context) SessId() (string, error) {
+func (c *Context) SessId() string {
 	res, err := c.SessionDo(func(ss *sessions.Session) interface{} {
 		return ss.ID
 	})
 	if err != nil {
-		return "", err
+		return ""
 	}
 
-	return res.(string), err
+	return res.(string)
 }
 
-func (c *Context) SessOpts() (*sessions.Options, error) {
+func (c *Context) SessOpts() *sessions.Options {
 	res, err := c.SessionDo(func(ss *sessions.Session) interface{} {
 		return ss.Options
 	})
 	if err != nil {
-		return nil, err
+		return nil
 	}
 
-	return res.(*sessions.Options), err
+	return res.(*sessions.Options)
 }
 
 func (c *Context) SessOptsSet(opts *sessions.Options) error {
@@ -101,35 +101,31 @@ func (c *Context) SessFlashAdd(val interface{}, key ...string) error {
 	return err
 }
 
-func (c *Context) SessFlash(key ...string) ([]interface{}, error) {
+func (c *Context) SessFlash(key ...string) []interface{} {
 	res, err := c.SessionDo(func(ss *sessions.Session) interface{} {
 		return ss.Flashes(key...)
 	})
 	if err != nil {
-		return nil, err
+		return nil
 	}
 
-	return res.([]interface{}), nil
+	return res.([]interface{})
 }
 
-func (c *Context) SessHas(key interface{}) (bool, error) {
-	values, err := c.SessGet()
-	if err != nil {
-		return false, err
-	}
-	_, b := values[key]
-	return b, nil
-}
-
-func (c *Context) SessGet() (map[interface{}]interface{}, error) {
+func (c *Context) SessAll() map[interface{}]interface{} {
 	res, err := c.SessionDo(func(ss *sessions.Session) interface{} {
 		return ss.Values
 	})
 	if err != nil {
-		return nil, err
+		return make(map[interface{}]interface{})
 	}
 
-	return res.(map[interface{}]interface{}), nil
+	return res.(map[interface{}]interface{})
+}
+
+func (c *Context) SessHas(key interface{}) bool {
+	_, b := c.SessAll()[key]
+	return b
 }
 
 func (c *Context) SessSet(values map[interface{}]interface{}) error {
@@ -142,12 +138,8 @@ func (c *Context) SessSet(values map[interface{}]interface{}) error {
 	return err
 }
 
-func (c *Context) SessGetOne(key interface{}) (interface{}, error) {
-	values, err := c.SessGet()
-	if err != nil {
-		return false, err
-	}
-	return values[key], nil
+func (c *Context) SessGetOne(key interface{}) interface{} {
+	return c.SessAll()[key]
 }
 
 func (c *Context) SessSetOne(key, val interface{}) error {
