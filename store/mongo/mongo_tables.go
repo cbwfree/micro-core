@@ -11,7 +11,6 @@ import (
 // 数据库初始化
 type Tables struct {
 	sync.RWMutex
-	dbname string
 	tables map[string]*Table
 }
 
@@ -43,8 +42,8 @@ func (mts *Tables) Get(name string) *Table {
 }
 
 // Add 添加新集合
-func (mts *Tables) Add(name, pkField, fkField string, model interface{}, index []mongo.IndexModel, data []interface{}) *Table {
-	tab := NewTable(name, pkField, fkField, model)
+func (mts *Tables) Add(name string, model interface{}, index []mongo.IndexModel, data []interface{}) *Table {
+	tab := NewTable(name, model)
 	if len(index) > 0 {
 		tab.SetIndex(index)
 	}
@@ -61,7 +60,7 @@ func (mts *Tables) Add(name, pkField, fkField string, model interface{}, index [
 
 // 设置自增初始化数据
 func (mts *Tables) SetAutoIdData(data []interface{}) {
-	mts.Add(AutoIncIdName, "", "", AutoIncId{}, nil, data)
+	mts.Add(AutoIncIdName, AutoIncId{}, nil, data)
 }
 
 // Init 初始化数据库
@@ -70,17 +69,17 @@ func (mts *Tables) Check(mdb *Store) error {
 		return nil
 	}
 
-	log.Debugf("[%s] check collections ...", mts.dbname)
+	log.Debugf("[%s] check collections ...", mdb.DbName())
 
 	// 获取集合列表
-	names, err := mdb.ListCollectionNames(mts.dbname)
+	names, err := mdb.ListCollectionNames(mdb.DbName())
 	if err != nil {
 		return err
 	}
 
 	var tables []string
 	var closure = func(sctx mongo.SessionContext) error {
-		cdb := mdb.Client().Database(mts.dbname)
+		cdb := mdb.Client().Database(mdb.DbName())
 
 		for _, tab := range mts.tables {
 			// 判断集合是否已存在
@@ -117,16 +116,15 @@ func (mts *Tables) Check(mdb *Store) error {
 	}
 
 	if len(tables) > 0 {
-		log.Infof("[%s] successfully initialize %d table ...", mts.dbname, len(tables))
+		log.Infof("[%s] successfully initialize %d table ...", mdb.DbName(), len(tables))
 	}
 
 	return nil
 }
 
 // 实例化数据库模型
-func NewTables(dbname string) *Tables {
+func NewTables() *Tables {
 	d := &Tables{
-		dbname: dbname,
 		tables: make(map[string]*Table),
 	}
 	return d
