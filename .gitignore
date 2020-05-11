@@ -1,3 +1,5 @@
 /.envrc
 /vendor/
 /.idea/
+/.go/
+/.pm2/
