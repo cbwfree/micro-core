@@ -1,24 +1,15 @@
 package rds
 
 import (
-	"bytes"
 	"fmt"
 	"github.com/bsm/redislock"
 	"github.com/go-redis/redis/v7"
 	log "github.com/micro/go-micro/v2/logger"
-	"strconv"
 	"strings"
-)
-
-var (
-	DefaultPrefix = "GAME"
-	DefaultSplit  = ":"
 )
 
 // Redis 存储
 type Store struct {
-	Prefix string
-	Split  string
 	db     int
 	opts   *Options
 	client *redis.Client
@@ -93,36 +84,6 @@ func (rs *Store) Disconnect() error {
 	return nil
 }
 
-// GenCacheName 生成redis key名称
-func (rs *Store) GenCacheName(name string, tags ...interface{}) string {
-	var buf = new(bytes.Buffer)
-	buf.WriteString(rs.Prefix)
-	buf.WriteString(rs.Split)
-	buf.WriteString(name)
-	for _, tag := range tags {
-		buf.WriteString(rs.Split)
-		switch tag.(type) {
-		case string:
-			buf.WriteString(tag.(string))
-		case int:
-			buf.WriteString(strconv.FormatInt(int64(tag.(int)), 10))
-		case int32:
-			buf.WriteString(strconv.FormatInt(int64(tag.(int32)), 10))
-		case int64:
-			buf.WriteString(strconv.FormatInt(tag.(int64), 10))
-		case uint:
-			buf.WriteString(strconv.FormatUint(uint64(tag.(uint)), 10))
-		case uint32:
-			buf.WriteString(strconv.FormatUint(uint64(tag.(uint32)), 10))
-		case uint64:
-			buf.WriteString(strconv.FormatUint(uint64(tag.(uint64)), 10))
-		default:
-			buf.WriteString(fmt.Sprint(tag))
-		}
-	}
-	return buf.String()
-}
-
 // Do 执行命令
 func (rs *Store) Do(args ...interface{}) *redis.Cmd {
 	cmd := redis.NewCmd(args...)
@@ -159,10 +120,8 @@ func (rs *Store) HSetStruct(key string, result interface{}) error {
 
 func NewStore(db int, opts ...Option) *Store {
 	rs := &Store{
-		Prefix: DefaultPrefix,
-		Split:  DefaultSplit,
-		db:     db,
-		opts:   newOptions(opts...),
+		db:   db,
+		opts: newOptions(opts...),
 	}
 	return rs
 }

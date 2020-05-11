@@ -59,6 +59,7 @@ func (mts *Tables) Add(name, pkField, fkField string, model interface{}, index [
 	return tab
 }
 
+// 设置自增初始化数据
 func (mts *Tables) SetAutoIdData(data []interface{}) {
 	mts.Add(AutoIncIdName, "", "", AutoIncId{}, nil, data)
 }
@@ -78,7 +79,7 @@ func (mts *Tables) Check(mdb *Store) error {
 	}
 
 	var tables []string
-	mdb.Client().UseSession(context.Background(), func(sctx mongo.SessionContext) error {
+	var closure = func(sctx mongo.SessionContext) error {
 		cdb := mdb.Client().Database(mts.dbname)
 
 		for _, tab := range mts.tables {
@@ -108,8 +109,12 @@ func (mts *Tables) Check(mdb *Store) error {
 				tables = append(tables, tab.name)
 			}
 		}
+
 		return nil
-	})
+	}
+	if err := mdb.Client().UseSession(context.Background(), closure); err != nil {
+		return err
+	}
 
 	if len(tables) > 0 {
 		log.Infof("[%s] successfully initialize %d table ...", mts.dbname, len(tables))

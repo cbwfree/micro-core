@@ -1,6 +1,7 @@
 package conf
 
 import (
+	"encoding/json"
 	"github.com/cbwfree/micro-core/conv"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -76,4 +77,10 @@ func convert(rows []*Model) map[string]interface{} {
 		}
 	}
 	return conf
+}
+
+func convertJson(rows []*Model) []byte {
+	m := convert(rows)
+	b, _ := json.Marshal(m)
+	return b
 }

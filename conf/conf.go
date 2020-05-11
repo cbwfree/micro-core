@@ -2,8 +2,8 @@ package conf
 
 import (
 	"context"
-	"github.com/cbwfree/micro-core/conv"
 	"github.com/micro/go-micro/v2/config"
+	"github.com/micro/go-micro/v2/config/reader"
 	"github.com/micro/go-micro/v2/config/source/memory"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -29,6 +29,22 @@ func (c *Conf) Data() interface{} {
 	return c.data
 }
 
+func (c *Conf) Get(path ...string) reader.Value {
+	return c.config.Get(path...)
+}
+
+func (c *Conf) Set(val interface{}, path ...string) {
+	c.config.Set(val, path...)
+}
+
+func (c *Conf) Del(path ...string) {
+	c.config.Del(path...)
+}
+
+func (c *Conf) Map() map[string]interface{} {
+	return c.config.Map()
+}
+
 // 载入web配置
 func (c *Conf) LoadDB(ctx context.Context, col *mongo.Collection, opts ...*options.FindOptions) error {
 	c.Lock()
@@ -44,7 +60,7 @@ func (c *Conf) LoadDB(ctx context.Context, col *mongo.Collection, opts ...*optio
 	}
 
 	source := memory.NewSource(
-		memory.WithJSON(conv.ToJson(convert(rows))),
+		memory.WithJSON(convertJson(rows)),
 	)
 
 	if err := c.config.Load(source); err != nil {
