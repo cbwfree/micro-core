@@ -40,7 +40,7 @@ func (c *Context) BindValid(req interface{}) error {
 	return nil
 }
 
-func (c *Context) SessionGet() (*sessions.Session, error) {
+func (c *Context) Session() (*sessions.Session, error) {
 	return session.Get("SESSION", c.Ctx())
 }
 
@@ -49,7 +49,7 @@ func (c *Context) SessionSave(session *sessions.Session) error {
 }
 
 func (c *Context) SessionDo(closure func(*sessions.Session) interface{}) (interface{}, error) {
-	s, err := c.SessionGet()
+	s, err := c.Session()
 	if err != nil {
 		return nil, err
 	}
