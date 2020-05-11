@@ -16,6 +16,7 @@ type Option func(o *Options)
 type Options struct {
 	Uri              string
 	RawUrl           string
+	Db               string
 	MinPoolSize      uint64
 	MaxPoolSize      uint64
 	ConnectTimeout   time.Duration
@@ -41,24 +42,6 @@ func newOptions(opts ...Option) *Options {
 	}
 	o.With(opts...)
 	return o
-}
-
-func InitUri(uri string) Option {
-	return func(o *Options) {
-		o.Uri = uri
-	}
-}
-
-func InitMinPoolSize(size uint64) Option {
-	return func(o *Options) {
-		o.MinPoolSize = size
-	}
-}
-
-func InitMaxPoolSize(size uint64) Option {
-	return func(o *Options) {
-		o.MaxPoolSize = size
-	}
 }
 
 func WithConnectTimeout(t time.Duration) Option {

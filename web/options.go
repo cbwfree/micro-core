@@ -56,42 +56,6 @@ func newOptions(opts ...Option) *Options {
 	return o
 }
 
-func InitAddr(addr string) Option {
-	return func(o *Options) {
-		o.Addr = addr
-	}
-}
-
-func InitTimeout(timeout int64) Option {
-	return func(o *Options) {
-		o.Timeout = time.Duration(timeout) * time.Second
-	}
-}
-
-func InitRoot(root string) Option {
-	return func(o *Options) {
-		o.Root = root
-	}
-}
-
-func InitStaticUri(uri string) Option {
-	return func(o *Options) {
-		o.StaticUri = uri
-	}
-}
-
-func InitStaticRoot(static string) Option {
-	return func(o *Options) {
-		o.StaticRoot = static
-	}
-}
-
-func InitAllowOrigins(allow []string) Option {
-	return func(o *Options) {
-		o.AllowOrigins = allow
-	}
-}
-
 func WithSession(store string, secret string) Option {
 	return func(o *Options) {
 		o.SessionStore = store

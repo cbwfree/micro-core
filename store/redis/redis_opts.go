@@ -18,6 +18,7 @@ type Option func(o *Options)
 type Options struct {
 	Uri             string
 	RawUrl          string
+	Db              int
 	MinIdleConns    int
 	PoolSize        int
 	MaxRetries      int
@@ -47,24 +48,6 @@ func newOptions(opts ...Option) *Options {
 	}
 	o.With(opts...)
 	return o
-}
-
-func InitUri(uri string) Option {
-	return func(o *Options) {
-		o.Uri = uri
-	}
-}
-
-func InitMinIdleConns(size int) Option {
-	return func(o *Options) {
-		o.MinIdleConns = size
-	}
-}
-
-func InitPoolSize(size int) Option {
-	return func(o *Options) {
-		o.PoolSize = size
-	}
 }
 
 func WithMaxRetries(size int) Option {

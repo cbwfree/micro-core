@@ -14,7 +14,6 @@ import (
 
 type Server struct {
 	sync.Mutex
-	name    string
 	running bool
 	exit    chan chan error
 
@@ -34,6 +33,10 @@ func (s *Server) Socket() *Socket {
 
 func (s *Server) With(opts ...Option) {
 	s.opts.With(opts...)
+}
+
+func (s *Server) Opts() *Options {
+	return s.opts
 }
 
 // 启用API路由
@@ -89,7 +92,7 @@ func (s *Server) enableStatic() {
 	} else {
 		uri = s.opts.StaticUri
 	}
-	log.Infof("[%s] HTTP Server Enable Static Service, Uri: %s", s.name, uri)
+	log.Infof("HTTP Server Enable Static Service, Uri: %s", uri)
 }
 
 // 启用Session
@@ -111,7 +114,7 @@ func (s *Server) enableSession() {
 		sessions.NewFilesystemStore(store, []byte(s.opts.SessionSecret)),
 	))
 
-	log.Infof("[%s] HTTP Server Enable Session Service, Save Path: %s", s.name, store)
+	log.Infof("HTTP Server Enable Session Service, Save Path: %s", store)
 }
 
 // 启用WebSocket
@@ -157,7 +160,7 @@ func (s *Server) Start() error {
 		ch <- l.Close()
 	}()
 
-	log.Infof("[%s] HTTP Server Listening on %v", s.name, l.Addr().String())
+	log.Infof("HTTP Server Listening on %v", l.Addr().String())
 
 	return nil
 }
@@ -175,14 +178,13 @@ func (s *Server) Close() error {
 	s.exit <- ch
 	s.running = false
 
-	log.Infof("[%s] HTTP Server Close ... ", s.name)
+	log.Infof("HTTP Server Close ... ")
 
 	return <-ch
 }
 
-func NewServer(name string, opts ...Option) *Server {
+func NewServer(opts ...Option) *Server {
 	s := &Server{
-		name: name,
 		echo: echo.New(),
 		opts: newOptions(opts...),
 	}

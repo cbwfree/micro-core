@@ -16,6 +16,7 @@ import (
 	"github.com/micro/go-micro/v2/registry"
 	"github.com/micro/go-micro/v2/server"
 	"sync"
+	"time"
 )
 
 var (
@@ -75,22 +76,24 @@ func (a *App) New(srvName string, flags ...[]cli.Flag) {
 			}
 
 			if a.Redis != nil {
-				a.Redis.With(
-					rds.InitUri(a.opts.RedisUrl),
-					rds.InitMinIdleConns(a.opts.RedisIdeConns),
-					rds.InitPoolSize(a.opts.RedisMaxPool),
-				)
+				a.Redis.Opts().Uri = a.opts.RedisUrl
+				a.Redis.Opts().Db = a.opts.RedisDb
+				a.Redis.Opts().MinIdleConns = a.opts.RedisIdeConns
+				a.Redis.Opts().PoolSize = a.opts.RedisMaxPool
 				if err := a.Redis.Connect(); err != nil {
 					return err
 				}
 			}
 
 			if a.Mongo != nil {
-				a.Mongo.With(
-					mgo.InitUri(a.opts.MongoUrl),
-					mgo.InitMinPoolSize(a.opts.MongoMinPool),
-					mgo.InitMaxPoolSize(a.opts.MongoMaxPool),
-				)
+				if a.opts.MongoDb == "" {
+					a.Mongo.Opts().Db = srvName
+				} else {
+					a.Mongo.Opts().Db = a.opts.MongoDb
+				}
+				a.Mongo.Opts().Uri = a.opts.MongoUrl
+				a.Mongo.Opts().MinPoolSize = a.opts.MongoMinPool
+				a.Mongo.Opts().MaxPoolSize = a.opts.MongoMaxPool
 				if err := a.Mongo.Connect(); err != nil {
 					return err
 				}
@@ -100,14 +103,12 @@ func (a *App) New(srvName string, flags ...[]cli.Flag) {
 		}),
 		micro.AfterStart(func() error {
 			if a.Web != nil {
-				a.Web.With(
-					web.InitAddr(a.opts.HttpAddr),
-					web.InitTimeout(a.opts.HttpTimeout),
-					web.InitRoot(a.opts.Root),
-					web.InitStaticUri(a.opts.HttpStaticUri),
-					web.InitStaticRoot(a.opts.HttpStaticRoot),
-					web.InitAllowOrigins(a.opts.HttpAllowOrigin.Value()),
-				)
+				a.Web.Opts().Addr = a.opts.HttpAddr
+				a.Web.Opts().Timeout = time.Duration(a.opts.HttpTimeout) * time.Second
+				a.Web.Opts().Root = a.opts.Root
+				a.Web.Opts().StaticUri = a.opts.HttpStaticUri
+				a.Web.Opts().StaticRoot = a.opts.HttpStaticRoot
+				a.Web.Opts().AllowOrigins = a.opts.HttpAllowOrigin.Value()
 				if err := a.Web.Start(); err != nil {
 					return err
 				}

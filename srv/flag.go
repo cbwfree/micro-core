@@ -30,6 +30,13 @@ var (
 			Destination: &OPTS().RedisUrl,
 		},
 		&cli.IntFlag{
+			Name:        "redis_db",
+			Value:       0,
+			Usage:       "设置redis连接的db",
+			EnvVars:     []string{"CORE_REDIS_DB"},
+			Destination: &OPTS().RedisDb,
+		},
+		&cli.IntFlag{
 			Name:        "redis_ide_conns",
 			Value:       50,
 			Usage:       "设置redis最大空闲连接数",
@@ -52,6 +59,13 @@ var (
 			Usage:       "设置MongoDB连接地址. 格式: mongodb://[username:password@]host1[:port1][,host2[:port2],...[,hostN[:portN]]]",
 			EnvVars:     []string{"CORE_MONGO_URL"},
 			Destination: &OPTS().MongoUrl,
+		},
+		&cli.StringFlag{
+			Name:        "mongo_db",
+			Value:       "",
+			Usage:       "设置MongoDB连接的默认数据库",
+			EnvVars:     []string{"CORE_MONGO_DB"},
+			Destination: &OPTS().MongoDb,
 		},
 		&cli.Uint64Flag{
 			Name:        "mongo_min_pool",

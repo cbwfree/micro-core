@@ -10,7 +10,6 @@ import (
 
 // Redis 存储
 type Store struct {
-	db     int
 	opts   *Options
 	client *redis.Client
 	locker *redislock.Client
@@ -51,7 +50,7 @@ func (rs *Store) Connect() error {
 	}
 
 	// 设置启动参数
-	opts.DB = rs.db
+	opts.DB = rs.opts.Db
 	opts.MaxRetries = rs.opts.MaxRetries
 	opts.MinRetryBackoff = rs.opts.MinRetryBackoff
 	opts.MaxRetryBackoff = rs.opts.MaxRetryBackoff
@@ -118,9 +117,8 @@ func (rs *Store) HSetStruct(key string, result interface{}) error {
 	return err
 }
 
-func NewStore(db int, opts ...Option) *Store {
+func NewStore(opts ...Option) *Store {
 	rs := &Store{
-		db:   db,
 		opts: newOptions(opts...),
 	}
 	return rs

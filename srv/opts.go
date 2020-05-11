@@ -11,10 +11,12 @@ type Options struct {
 	Root string // 数据保存位置
 
 	RedisUrl      string // Redis URL地址
+	RedisDb       int    // Redis Db
 	RedisIdeConns int    // Redis 最小空闲连接数
 	RedisMaxPool  int    // Redis 最大连接数
 
 	MongoUrl     string // MongoDB URL地址
+	MongoDb      string // MongoDB 数据库名
 	MongoMinPool uint64 // MongoDB 最小连接数
 	MongoMaxPool uint64 // MongoDB 最大连接数
 

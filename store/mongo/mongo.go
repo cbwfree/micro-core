@@ -19,7 +19,6 @@ import (
 
 // MongoDB 数据存储
 type Store struct {
-	dbname string
 	opts   *Options
 	client *mongo.Client
 }
@@ -29,7 +28,7 @@ func (ms *Store) With(opts ...Option) {
 }
 
 func (ms *Store) DbName() string {
-	return ms.dbname
+	return ms.opts.Db
 }
 
 func (ms *Store) Opts() *Options {
@@ -39,6 +38,10 @@ func (ms *Store) Opts() *Options {
 func (ms *Store) Connect() error {
 	if ms.client != nil {
 		return nil
+	}
+
+	if ms.opts.Db == "" {
+		return errors.New("you must set mongodb dbname")
 	}
 
 	if ms.opts.Uri == "" {
@@ -103,7 +106,7 @@ func (ms *Store) D(dbname ...string) *mongo.Database {
 	if len(dbname) > 0 && dbname[0] != "" {
 		return ms.client.Database(dbname[0])
 	}
-	return ms.client.Database(ms.dbname)
+	return ms.client.Database(ms.DbName())
 }
 
 // Collection 获取集合对象
@@ -111,7 +114,7 @@ func (ms *Store) C(name string, dbname ...string) *mongo.Collection {
 	if len(dbname) > 0 && dbname[0] != "" {
 		return ms.client.Database(dbname[0]).Collection(name)
 	}
-	return ms.client.Database(ms.dbname).Collection(name)
+	return ms.client.Database(ms.DbName()).Collection(name)
 }
 
 // CloneCollection 克隆集合对象
@@ -161,10 +164,9 @@ func (ms *Store) Scan(dbName, tabName string, cur, size int64, filter interface{
 }
 
 // 实例化MongoDB存储
-func NewStore(dbname string, opts ...Option) *Store {
+func NewStore(opts ...Option) *Store {
 	ms := &Store{
-		dbname: dbname,
-		opts:   newOptions(opts...),
+		opts: newOptions(opts...),
 	}
 	return ms
 }

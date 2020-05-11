@@ -9,21 +9,21 @@ import (
 
 type WithAPP func(c *App)
 
-func WithMongoDB(dbname string, opts ...mgo.Option) WithAPP {
+func WithMongoDB(opts ...mgo.Option) WithAPP {
 	return func(a *App) {
-		a.Mongo = mgo.NewStore(dbname, opts...)
+		a.Mongo = mgo.NewStore(opts...)
 	}
 }
 
-func WithRedisDB(db int, opts ...rds.Option) WithAPP {
+func WithRedisDB(opts ...rds.Option) WithAPP {
 	return func(a *App) {
-		a.Redis = rds.NewStore(db, opts...)
+		a.Redis = rds.NewStore(opts...)
 	}
 }
 
-func WithWebServer(name string, opts ...web.Option) WithAPP {
+func WithWebServer(opts ...web.Option) WithAPP {
 	return func(a *App) {
-		a.Web = web.NewServer(name, opts...)
+		a.Web = web.NewServer(opts...)
 	}
 }
 
