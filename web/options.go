@@ -6,7 +6,6 @@ import (
 )
 
 var (
-	defaultAllowOrigins  = []string{"*"}
 	defaultAllowMethods  = []string{echo.GET, echo.PUT, echo.PATCH, echo.POST, echo.DELETE, echo.OPTIONS}
 	defaultAllowHeaders  = []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept, echo.HeaderAuthorization, echo.HeaderXCSRFToken}
 	defaultExposeHeaders = []string{echo.HeaderAuthorization, echo.HeaderVary, echo.HeaderCookie}
@@ -28,9 +27,9 @@ type Options struct {
 	SocketOnReceive    OnReceiveHandler
 	SocketOnDisconnect OnDisconnectHandler
 
-	StaticUri     []string
-	StaticRoot    []string
-	AllowOrigins  []string
+	StaticUri     string
+	StaticRoot    string
+	AllowOrigins  string
 	AllowMethods  []string
 	AllowHeaders  []string
 	ExposeHeaders []string
@@ -47,7 +46,6 @@ func (o *Options) With(opts ...Option) {
 
 func newOptions(opts ...Option) *Options {
 	o := &Options{
-		AllowOrigins:  defaultAllowOrigins,
 		AllowMethods:  defaultAllowMethods,
 		AllowHeaders:  defaultAllowHeaders,
 		ExposeHeaders: defaultExposeHeaders,

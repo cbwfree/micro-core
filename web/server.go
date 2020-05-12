@@ -9,6 +9,7 @@ import (
 	log "github.com/micro/go-micro/v2/logger"
 	"net"
 	"path/filepath"
+	"strings"
 	"sync"
 )
 
@@ -54,12 +55,12 @@ func (s *Server) enableAPIRoutes() {
 
 // 启用跨域
 func (s *Server) enableCORS() {
-	if len(s.opts.AllowOrigins) == 0 {
+	if s.opts.AllowOrigins == "" {
 		return
 	}
 
 	s.echo.Use(middleware.CORSWithConfig(middleware.CORSConfig{
-		AllowOrigins:  s.opts.AllowOrigins,
+		AllowOrigins:  []string{s.opts.AllowOrigins},
 		AllowHeaders:  s.opts.AllowHeaders,
 		AllowMethods:  s.opts.AllowMethods,
 		ExposeHeaders: s.opts.ExposeHeaders,
@@ -72,12 +73,13 @@ func (s *Server) enableStatic() {
 		return
 	}
 
-	var staticUrl = make([]string, len(s.opts.StaticRoot))
-	for i, v := range s.opts.StaticUri {
+	var staticRoot = strings.Split(s.opts.StaticRoot, ":")
+	var staticUrl = make([]string, len(staticRoot))
+	for i, v := range strings.Split(s.opts.StaticUri, ":") {
 		staticUrl[i] = v
 	}
 
-	for i, root := range s.opts.StaticRoot {
+	for i, root := range staticRoot {
 		prefix := staticUrl[i]
 		if prefix == "" {
 			prefix = "/"

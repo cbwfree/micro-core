@@ -98,23 +98,26 @@ var (
 			EnvVars:     []string{"CORE_HTTP_TIMEOUT"},
 			Destination: &OPTS().HttpTimeout,
 		},
-		&cli.StringSliceFlag{
-			Name:    "http_static_uri",
-			Value:   OPTS().HttpStaticUri,
-			Usage:   "设置HTTP静态文件目录.",
-			EnvVars: []string{"CORE_HTTP_STATIC_URI"},
+		&cli.StringFlag{
+			Name:        "http_static_uri",
+			Value:       "",
+			Usage:       "设置HTTP静态文件目录访问URI. 多个目录使用:分隔",
+			EnvVars:     []string{"CORE_HTTP_STATIC_URI"},
+			Destination: &OPTS().HttpStaticUri,
 		},
-		&cli.StringSliceFlag{
-			Name:    "http_static_root",
-			Value:   OPTS().HttpStaticRoot,
-			Usage:   "设置HTTP静态文件目录.",
-			EnvVars: []string{"CORE_HTTP_STATIC_ROOT"},
+		&cli.StringFlag{
+			Name:        "http_static_root",
+			Value:       "",
+			Usage:       "设置HTTP静态文件目录路径. 多个目录使用:分隔",
+			EnvVars:     []string{"CORE_HTTP_STATIC_ROOT"},
+			Destination: &OPTS().HttpStaticRoot,
 		},
-		&cli.StringSliceFlag{
-			Name:    "http_allow_origins",
-			Usage:   "设置HTTP运行的跨域源地址.",
-			EnvVars: []string{"CORE_HTTP_ALLOW_ORIGINS"},
-			Value:   OPTS().HttpAllowOrigin,
+		&cli.StringFlag{
+			Name:        "http_allow_origins",
+			Value:       "*",
+			Usage:       "设置HTTP运行的跨域源地址.",
+			EnvVars:     []string{"CORE_HTTP_ALLOW_ORIGINS"},
+			Destination: &OPTS().HttpAllowOrigin,
 		},
 	}
 )
