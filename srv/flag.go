@@ -99,16 +99,9 @@ var (
 			Destination: &OPTS().HttpTimeout,
 		},
 		&cli.StringFlag{
-			Name:        "http_static_uri",
-			Value:       "",
-			Usage:       "设置HTTP静态文件目录访问URI. 多个目录使用:分隔",
-			EnvVars:     []string{"CORE_HTTP_STATIC_URI"},
-			Destination: &OPTS().HttpStaticUri,
-		},
-		&cli.StringFlag{
 			Name:        "http_static_root",
 			Value:       "",
-			Usage:       "设置HTTP静态文件目录路径. 多个目录使用:分隔",
+			Usage:       "设置HTTP静态文件目录路径. 多个目录使用,分隔. 如需指定URI, 则使用:. 例如 /ui:/tmp/root",
 			EnvVars:     []string{"CORE_HTTP_STATIC_ROOT"},
 			Destination: &OPTS().HttpStaticRoot,
 		},

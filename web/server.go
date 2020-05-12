@@ -73,16 +73,13 @@ func (s *Server) enableStatic() {
 		return
 	}
 
-	var staticRoot = strings.Split(s.opts.StaticRoot, ":")
-	var staticUrl = make([]string, len(staticRoot))
-	for i, v := range strings.Split(s.opts.StaticUri, ":") {
-		staticUrl[i] = v
-	}
+	for _, val := range strings.Split(s.opts.StaticRoot, ",") {
+		prefix := "/"
+		root := val
 
-	for i, root := range staticRoot {
-		prefix := staticUrl[i]
-		if prefix == "" {
-			prefix = "/"
+		rs := strings.Split(val, ":")
+		if len(rs) == 2 {
+			prefix, root = rs[0], rs[1]
 		}
 
 		var use func(mdd ...echo.MiddlewareFunc)

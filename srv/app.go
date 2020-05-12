@@ -107,7 +107,6 @@ func (a *App) New(srvName string, flags ...[]cli.Flag) {
 				a.Web.Opts().Addr = a.opts.HttpAddr
 				a.Web.Opts().Timeout = time.Duration(a.opts.HttpTimeout) * time.Second
 				a.Web.Opts().Root = a.opts.Root
-				a.Web.Opts().StaticUri = a.opts.HttpStaticUri
 				a.Web.Opts().StaticRoot = a.opts.HttpStaticRoot
 				a.Web.Opts().AllowOrigins = a.opts.HttpAllowOrigin
 				if err := a.Web.Start(); err != nil {

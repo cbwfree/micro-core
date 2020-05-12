@@ -27,7 +27,6 @@ type Options struct {
 	SocketOnReceive    OnReceiveHandler
 	SocketOnDisconnect OnDisconnectHandler
 
-	StaticUri     string
 	StaticRoot    string
 	AllowOrigins  string
 	AllowMethods  []string
