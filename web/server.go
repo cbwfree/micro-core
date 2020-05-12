@@ -68,31 +68,37 @@ func (s *Server) enableCORS() {
 
 // 启用静态文件
 func (s *Server) enableStatic() {
-	if s.opts.StaticRoot == "" {
+	if len(s.opts.StaticRoot) == 0 {
 		return
 	}
 
-	var use func(mdd ...echo.MiddlewareFunc)
-	if s.opts.StaticUri != "" && s.opts.StaticUri != "/" {
-		use = s.echo.Group(s.opts.StaticUri).Use
-	} else {
-		use = s.echo.Use
+	var staticUrl = make([]string, len(s.opts.StaticRoot))
+	for i, v := range s.opts.StaticUri {
+		staticUrl[i] = v
 	}
 
-	use(middleware.StaticWithConfig(middleware.StaticConfig{
-		Root:   s.opts.StaticRoot,
-		Index:  "index.html",
-		HTML5:  true,  // SPA 单页面是否转发
-		Browse: false, // 是否启用目录浏览
-	}))
+	for i, root := range s.opts.StaticRoot {
+		prefix := staticUrl[i]
+		if prefix == "" {
+			prefix = "/"
+		}
 
-	var uri string
-	if s.opts.StaticUri == "" {
-		uri = "/"
-	} else {
-		uri = s.opts.StaticUri
+		var use func(mdd ...echo.MiddlewareFunc)
+		if prefix != "/" {
+			use = s.echo.Group(prefix).Use
+		} else {
+			use = s.echo.Use
+		}
+
+		use(middleware.StaticWithConfig(middleware.StaticConfig{
+			Root:   root,
+			Index:  "index.html",
+			HTML5:  true,  // SPA 单页面是否转发
+			Browse: false, // 是否启用目录浏览
+		}))
+
+		log.Infof("HTTP Server Enable Static Service, Prefix: %s", prefix)
 	}
-	log.Infof("HTTP Server Enable Static Service, Uri: %s", uri)
 }
 
 // 启用Session

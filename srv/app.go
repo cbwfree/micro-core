@@ -15,6 +15,7 @@ import (
 	log "github.com/micro/go-micro/v2/logger"
 	"github.com/micro/go-micro/v2/registry"
 	"github.com/micro/go-micro/v2/server"
+	"strings"
 	"sync"
 	"time"
 )
@@ -87,9 +88,9 @@ func (a *App) New(srvName string, flags ...[]cli.Flag) {
 
 			if a.Mongo != nil {
 				if a.opts.MongoDb == "" {
-					a.Mongo.Opts().Db = srvName
+					a.Mongo.Opts().Db = strings.Replace(srvName, ".", "-", -1)
 				} else {
-					a.Mongo.Opts().Db = a.opts.MongoDb
+					a.Mongo.Opts().Db = strings.Replace(a.opts.MongoDb, ".", "-", -1)
 				}
 				a.Mongo.Opts().Uri = a.opts.MongoUrl
 				a.Mongo.Opts().MinPoolSize = a.opts.MongoMinPool
@@ -106,8 +107,8 @@ func (a *App) New(srvName string, flags ...[]cli.Flag) {
 				a.Web.Opts().Addr = a.opts.HttpAddr
 				a.Web.Opts().Timeout = time.Duration(a.opts.HttpTimeout) * time.Second
 				a.Web.Opts().Root = a.opts.Root
-				a.Web.Opts().StaticUri = a.opts.HttpStaticUri
-				a.Web.Opts().StaticRoot = a.opts.HttpStaticRoot
+				a.Web.Opts().StaticUri = a.opts.HttpStaticUri.Value()
+				a.Web.Opts().StaticRoot = a.opts.HttpStaticRoot.Value()
 				a.Web.Opts().AllowOrigins = a.opts.HttpAllowOrigin.Value()
 				if err := a.Web.Start(); err != nil {
 					return err

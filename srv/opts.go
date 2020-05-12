@@ -22,13 +22,15 @@ type Options struct {
 
 	HttpAddr        string           // HTTP 服务地址
 	HttpTimeout     int64            // HTTP 请求超时
-	HttpStaticUri   string           // HTTP 静态文件服务URI路径
-	HttpStaticRoot  string           // HTTP 静态文件服务本地路径
+	HttpStaticUri   *cli.StringSlice // HTTP 静态文件服务URI路径
+	HttpStaticRoot  *cli.StringSlice // HTTP 静态文件服务本地路径
 	HttpAllowOrigin *cli.StringSlice // HTTP 允许的跨域源
 }
 
 func newOptions() *Options {
 	return &Options{
-		HttpAllowOrigin: cli.NewStringSlice("*"),
+		HttpStaticUri:   cli.NewStringSlice(),
+		HttpStaticRoot:  cli.NewStringSlice(),
+		HttpAllowOrigin: cli.NewStringSlice(),
 	}
 }

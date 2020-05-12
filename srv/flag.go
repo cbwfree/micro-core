@@ -91,26 +91,24 @@ var (
 			EnvVars:     []string{"CORE_HTTP_ADDR"},
 			Destination: &OPTS().HttpAddr,
 		},
-		&cli.StringFlag{
-			Name:        "http_static_uri",
-			Value:       "",
-			Usage:       "设置HTTP静态文件目录.",
-			EnvVars:     []string{"CORE_HTTP_STATIC_URI"},
-			Destination: &OPTS().HttpStaticUri,
-		},
-		&cli.StringFlag{
-			Name:        "http_static_root",
-			Value:       "",
-			Usage:       "设置HTTP静态文件目录.",
-			EnvVars:     []string{"CORE_HTTP_STATIC_ROOT"},
-			Destination: &OPTS().HttpStaticRoot,
-		},
 		&cli.Int64Flag{
 			Name:        "http_timeout",
 			Value:       30,
 			Usage:       "设置HTTP服务请求超时时间",
 			EnvVars:     []string{"CORE_HTTP_TIMEOUT"},
 			Destination: &OPTS().HttpTimeout,
+		},
+		&cli.StringSliceFlag{
+			Name:    "http_static_uri",
+			Value:   OPTS().HttpStaticUri,
+			Usage:   "设置HTTP静态文件目录.",
+			EnvVars: []string{"CORE_HTTP_STATIC_URI"},
+		},
+		&cli.StringSliceFlag{
+			Name:    "http_static_root",
+			Value:   OPTS().HttpStaticRoot,
+			Usage:   "设置HTTP静态文件目录.",
+			EnvVars: []string{"CORE_HTTP_STATIC_ROOT"},
 		},
 		&cli.StringSliceFlag{
 			Name:    "http_allow_origins",
