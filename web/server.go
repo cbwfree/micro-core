@@ -1,12 +1,15 @@
 package web
 
 import (
+	"encoding/json"
+	"github.com/cbwfree/micro-core/conv"
 	"github.com/cbwfree/micro-core/fn"
 	"github.com/gorilla/sessions"
 	"github.com/labstack/echo-contrib/session"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	log "github.com/micro/go-micro/v2/logger"
+	"io/ioutil"
 	"net"
 	"path/filepath"
 	"strings"
@@ -73,13 +76,26 @@ func (s *Server) enableStatic() {
 		return
 	}
 
-	for _, val := range strings.Split(s.opts.StaticRoot, ",") {
+	for _, val := range strings.Split(s.opts.StaticRoot, ":") {
 		prefix := "/"
 		root := val
+		confFile := filepath.Join(val, "config.json")
 
-		rs := strings.Split(val, ":")
-		if len(rs) == 2 {
-			prefix, root = rs[0], rs[1]
+		// 读取配置文件
+		if fn.FileExist(confFile) {
+			b, err := ioutil.ReadFile(confFile)
+			if err != nil {
+				log.Fatal("Read web static config.json error: %v", err)
+				return
+			}
+
+			var res = make(map[string]interface{})
+			if err := json.Unmarshal(b, &res); err != nil {
+				log.Fatal("Parse web static config.json error: %v", err)
+				return
+			}
+
+			prefix = conv.String(res["baseUrl"])
 		}
 
 		var use func(mdd ...echo.MiddlewareFunc)
@@ -96,7 +112,7 @@ func (s *Server) enableStatic() {
 			Browse: false, // 是否启用目录浏览
 		}))
 
-		log.Infof("HTTP Server Enable Static Service, Prefix: %s", prefix)
+		log.Infof("HTTP Server Enable Static Service, Prefix: %s, Path: %s", prefix, root)
 	}
 }
 
@@ -108,11 +124,9 @@ func (s *Server) enableSession() {
 
 	// 检查目录是否存在
 	store := filepath.Join(s.opts.Root, s.opts.SessionStore)
-	if !fn.ExistDir(store) {
-		if err := fn.MkDir(store, 0755); err != nil {
-			log.Fatalf("Enable Web Session Error: %s", err)
-			return
-		}
+	if err := fn.Mkdir(store); err != nil {
+		log.Fatalf("Enable Web Session Error: %s", err)
+		return
 	}
 
 	s.echo.Use(session.Middleware(

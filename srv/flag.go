@@ -101,7 +101,7 @@ var (
 		&cli.StringFlag{
 			Name:        "http_static_root",
 			Value:       "",
-			Usage:       "设置HTTP静态文件目录路径. 多个目录使用,分隔. 如需指定URI, 则使用:. 例如 /ui:/tmp/root",
+			Usage:       "设置HTTP静态文件目录路径. 多个目录使用:分隔. 目录中可配置config.json文件",
 			EnvVars:     []string{"CORE_HTTP_STATIC_ROOT"},
 			Destination: &OPTS().HttpStaticRoot,
 		},

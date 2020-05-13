@@ -70,10 +70,8 @@ func (a *App) New(srvName string, flags ...[]cli.Flag) {
 			}
 
 			// 检查目录是否存在
-			if !fn.ExistDir(a.opts.Root) {
-				if err := fn.MkDir(a.opts.Root, 0755); err != nil {
-					return err
-				}
+			if err := fn.Mkdir(a.opts.Root, 0755); err != nil {
+				return err
 			}
 
 			if a.Redis != nil {

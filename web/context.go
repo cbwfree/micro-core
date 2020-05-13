@@ -1,9 +1,12 @@
 package web
 
 import (
+	"github.com/cbwfree/micro-core/conv"
 	"github.com/gorilla/sessions"
 	"github.com/labstack/echo-contrib/session"
 	"github.com/labstack/echo/v4"
+	"github.com/steambap/captcha"
+	"image/color"
 )
 
 type Context struct {
@@ -40,26 +43,15 @@ func (c *Context) BindValid(req interface{}) error {
 	return nil
 }
 
-func (c *Context) Session() (*sessions.Session, error) {
-	return session.Get("SESSION", c.Ctx())
-}
-
-func (c *Context) SessionSave(session *sessions.Session) error {
-	return session.Save(c.Ctx().Request(), c.Ctx().Response())
+func (c *Context) Session() *sessions.Session {
+	s, _ := session.Get("SESSION", c.Ctx())
+	return s
 }
 
 func (c *Context) SessionDo(closure func(*sessions.Session) interface{}) (interface{}, error) {
-	s, err := c.Session()
-	if err != nil {
-		return nil, err
-	}
-
+	s := c.Session()
 	res := closure(s)
-
-	if err := c.SessionSave(s); err != nil {
-		return nil, err
-	}
-
+	_ = s.Save(c.ctx.Request(), c.ctx.Response())
 	return res, nil
 }
 
@@ -70,7 +62,6 @@ func (c *Context) SessId() string {
 	if err != nil {
 		return ""
 	}
-
 	return res.(string)
 }
 
@@ -81,7 +72,6 @@ func (c *Context) SessOpts() *sessions.Options {
 	if err != nil {
 		return nil
 	}
-
 	return res.(*sessions.Options)
 }
 
@@ -108,7 +98,6 @@ func (c *Context) SessFlash(key ...string) []interface{} {
 	if err != nil {
 		return nil
 	}
-
 	return res.([]interface{})
 }
 
@@ -119,7 +108,6 @@ func (c *Context) SessAll() map[interface{}]interface{} {
 	if err != nil {
 		return make(map[interface{}]interface{})
 	}
-
 	return res.(map[interface{}]interface{})
 }
 
@@ -146,6 +134,41 @@ func (c *Context) SessSetOne(key, val interface{}) error {
 	return c.SessSet(map[interface{}]interface{}{
 		key: val,
 	})
+}
+
+// 创建验证码
+func (c *Context) CaptchaNew(key string, width, height int, setOpt ...captcha.SetOption) error {
+	var opt captcha.SetOption
+	if len(setOpt) > 0 && setOpt[0] != nil {
+		opt = setOpt[0]
+	} else {
+		opt = func(opt *captcha.Options) {
+			opt.BackgroundColor = color.White
+			opt.CharPreset = "0123456789"
+			opt.CurveNumber = 1
+			opt.FontDPI = 80
+		}
+	}
+
+	data, err := captcha.New(width, height, opt)
+	if err != nil {
+		return c.Error(err)
+	}
+
+	if err := c.SessFlashAdd(data.Text, key); err != nil {
+		return c.Error(err)
+	}
+
+	return data.WriteImage(c.ctx.Response().Writer)
+}
+
+// 验证验证码
+func (c *Context) CaptchaCheck(key string, captcha string) bool {
+	res := c.SessFlash(key)
+	if len(res) == 0 {
+		return false
+	}
+	return conv.String(res[0]) == captcha
 }
 
 func ExtendCtx(ctx echo.Context) *Context {
