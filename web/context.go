@@ -121,6 +121,24 @@ func (c *Context) SessSetOne(key, val interface{}) {
 	})
 }
 
+func (c *Context) SessDel(key ...interface{}) {
+	c.SessionDo(func(s *sessions.Session) interface{} {
+		for _, k := range key {
+			if _, ok := s.Values[k]; ok {
+				delete(s.Values, k)
+			}
+		}
+		return nil
+	})
+}
+
+func (c *Context) SessClean() {
+	c.SessionDo(func(s *sessions.Session) interface{} {
+		s.Values = make(map[interface{}]interface{})
+		return nil
+	})
+}
+
 // 创建验证码
 func (c *Context) CaptchaNew(key string, width, height int, setOpt ...captcha.SetOption) error {
 	var opt captcha.SetOption

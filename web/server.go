@@ -63,10 +63,11 @@ func (s *Server) enableCORS() {
 	}
 
 	s.echo.Use(middleware.CORSWithConfig(middleware.CORSConfig{
-		AllowOrigins:  []string{s.opts.AllowOrigins},
-		AllowHeaders:  s.opts.AllowHeaders,
-		AllowMethods:  s.opts.AllowMethods,
-		ExposeHeaders: s.opts.ExposeHeaders,
+		AllowOrigins:     []string{s.opts.AllowOrigins},
+		AllowCredentials: true,
+		AllowHeaders:     s.opts.AllowHeaders,
+		AllowMethods:     s.opts.AllowMethods,
+		ExposeHeaders:    s.opts.ExposeHeaders,
 	}))
 }
 
@@ -217,7 +218,7 @@ func NewServer(opts ...Option) *Server {
 	s.echo.Use(middleware.Logger())
 	// 从 panic 链中的任意位置恢复程序， 打印堆栈的错误信息，并将错误集中交给 HTTPErrorHandler 处理。
 	s.echo.Use(middleware.Recover())
-	s.echo.Use(middleware.CSRF())
+	s.echo.Use(middleware.Secure())
 
 	return s
 }

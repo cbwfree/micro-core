@@ -29,58 +29,50 @@ var (
 )
 
 // 转换模型数据为对应类型数据
-func convert(rows []*Model) map[string]interface{} {
-	// 整理数据
-	var conf = make(map[string]interface{})
-	for _, row := range rows {
-		switch row.Type {
-		case "int":
-			conf[row.Field] = conv.Int(row.Value)
-		case "int32":
-			conf[row.Field] = conv.Int32(row.Value)
-		case "int64":
-			conf[row.Field] = conv.Int64(row.Value)
-		case "uint":
-			conf[row.Field] = conv.Uint(row.Value)
-		case "uint32":
-			conf[row.Field] = conv.Uint32(row.Value)
-		case "uint64":
-			conf[row.Field] = conv.Uint64(row.Value)
-		case "float32":
-			conf[row.Field] = conv.Float32(row.Value)
-		case "float64":
-			conf[row.Field] = conv.Float64(row.Value)
-		case "bool":
-			conf[row.Field] = conv.Bool(row.Value)
-		case "[]string":
-			conf[row.Field] = strings.Split(row.Value, ",")
-		case "[]int":
-			var value []int
-			for _, s := range strings.Split(row.Value, ",") {
-				value = append(value, conv.Int(s))
-			}
-			conf[row.Field] = value
-		case "[]int32":
-			var value []int32
-			for _, s := range strings.Split(row.Value, ",") {
-				value = append(value, conv.Int32(s))
-			}
-			conf[row.Field] = value
-		case "[]int64":
-			var value []int64
-			for _, s := range strings.Split(row.Value, ",") {
-				value = append(value, conv.Int64(s))
-			}
-			conf[row.Field] = value
-		default:
-			conf[row.Field] = row.Value
+func convert(t string, v string) interface{} {
+	switch t {
+	case "bool":
+		return conv.Bool(v)
+	case "int":
+		return conv.Int(v)
+	case "int32":
+		return conv.Int32(v)
+	case "int64":
+		return conv.Int64(v)
+	case "float32":
+		return conv.Float32(v)
+	case "float64":
+		return conv.Float64(v)
+	case "[]string":
+		return strings.Split(v, ",")
+	case "[]int":
+		var value []int
+		for _, s := range strings.Split(v, ",") {
+			value = append(value, conv.Int(s))
 		}
+		return value
+	case "[]int32":
+		var value []int32
+		for _, s := range strings.Split(v, ",") {
+			value = append(value, conv.Int32(s))
+		}
+		return value
+	case "[]int64":
+		var value []int64
+		for _, s := range strings.Split(v, ",") {
+			value = append(value, conv.Int64(s))
+		}
+		return value
+	default:
+		return conv.String(v)
 	}
-	return conf
 }
 
-func convertJson(rows []*Model) []byte {
-	m := convert(rows)
-	b, _ := json.Marshal(m)
+func toDataJson(rows []*Model) []byte {
+	var data = make(map[string]interface{})
+	for _, row := range rows {
+		data[row.Field] = convert(row.Type, row.Value)
+	}
+	b, _ := json.Marshal(data)
 	return b
 }
