@@ -90,19 +90,14 @@ func (c *Context) SessFlash(key ...string) []interface{} {
 	return res.([]interface{})
 }
 
-func (c *Context) SessAll() map[interface{}]interface{} {
+func (c *Context) SessGetValues() map[interface{}]interface{} {
 	res := c.SessionDo(func(ss *sessions.Session) interface{} {
 		return ss.Values
 	})
 	return res.(map[interface{}]interface{})
 }
 
-func (c *Context) SessHas(key interface{}) bool {
-	_, b := c.SessAll()[key]
-	return b
-}
-
-func (c *Context) SessSet(values map[interface{}]interface{}) {
+func (c *Context) SessSetValues(values map[interface{}]interface{}) {
 	_ = c.SessionDo(func(ss *sessions.Session) interface{} {
 		for k, v := range values {
 			ss.Values[k] = v
@@ -111,12 +106,17 @@ func (c *Context) SessSet(values map[interface{}]interface{}) {
 	})
 }
 
-func (c *Context) SessGetOne(key interface{}) interface{} {
-	return c.SessAll()[key]
+func (c *Context) SessHas(key interface{}) bool {
+	_, b := c.SessGetValues()[key]
+	return b
 }
 
-func (c *Context) SessSetOne(key, val interface{}) {
-	c.SessSet(map[interface{}]interface{}{
+func (c *Context) SessGet(key interface{}) interface{} {
+	return c.SessGetValues()[key]
+}
+
+func (c *Context) SessSet(key, val interface{}) {
+	c.SessSetValues(map[interface{}]interface{}{
 		key: val,
 	})
 }
@@ -158,7 +158,7 @@ func (c *Context) CaptchaNew(key string, width, height int, setOpt ...captcha.Se
 		return c.Error(err)
 	}
 
-	c.SessSetOne(key, data.Text)
+	c.SessSet(key, data.Text)
 
 	return data.WriteImage(c.ctx.Response().Writer)
 }
