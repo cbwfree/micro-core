@@ -133,10 +133,10 @@ func (ms *Store) ListCollectionNames(dbname ...string) ([]string, error) {
 }
 
 // 分段获取数据
-func (ms *Store) Scan(dbName, tabName string, cur, size int64, filter interface{}, result interface{}, fn ...func(opts *options.FindOptions) *options.FindOptions) *Scan {
+func (ms *Store) Scan(tabName string, cur, size int64, filter interface{}, result interface{}, fn ...func(opts *options.FindOptions) *options.FindOptions) *Scan {
 	var scan *Scan
 	var closure = func(sctx mongo.SessionContext) error {
-		col := sctx.Client().Database(dbName).Collection(tabName)
+		col := sctx.Client().Database(ms.DbName()).Collection(tabName)
 
 		count, _ := col.CountDocuments(sctx, filter)
 		scan = NewScan(count, cur, size)
@@ -150,7 +150,7 @@ func (ms *Store) Scan(dbName, tabName string, cur, size int64, filter interface{
 			if err != nil {
 				return err
 			}
-			if err := cur.All(nil, result); err != nil {
+			if err := cur.All(sctx, result); err != nil {
 				return err
 			}
 		}

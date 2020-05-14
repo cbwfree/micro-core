@@ -10,10 +10,7 @@ import (
 )
 
 // SelectOne 通过反射查询单条记录
-func SelectOne(col *mongo.Collection, filter interface{}, model reflect.Type, options ...*options.FindOneOptions) (interface{}, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), DefaultReadWriteTimeout)
-	defer cancel()
-
+func SelectOne(ctx context.Context, col *mongo.Collection, filter interface{}, model reflect.Type, options ...*options.FindOneOptions) (interface{}, error) {
 	if filter == nil {
 		filter = bson.M{}
 	}
@@ -27,10 +24,7 @@ func SelectOne(col *mongo.Collection, filter interface{}, model reflect.Type, op
 }
 
 // SelectAll 通过反射查询多条记录
-func SelectAll(col *mongo.Collection, filter interface{}, model reflect.Type, options ...*options.FindOptions) ([]interface{}, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), DefaultReadWriteTimeout)
-	defer cancel()
-
+func SelectAll(ctx context.Context, col *mongo.Collection, filter interface{}, model reflect.Type, options ...*options.FindOptions) ([]interface{}, error) {
 	if filter == nil {
 		filter = bson.M{}
 	}
@@ -57,10 +51,8 @@ func SelectAll(col *mongo.Collection, filter interface{}, model reflect.Type, op
 	return result, nil
 }
 
-func FindOne(col *mongo.Collection, filter interface{}, result interface{}, options ...*options.FindOneOptions) error {
-	ctx, cancel := context.WithTimeout(context.Background(), DefaultReadWriteTimeout)
-	defer cancel()
-
+// 查找单条数据
+func FindOne(ctx context.Context, col *mongo.Collection, filter interface{}, result interface{}, options ...*options.FindOneOptions) error {
 	if filter == nil {
 		filter = bson.M{}
 	}
@@ -72,10 +64,8 @@ func FindOne(col *mongo.Collection, filter interface{}, result interface{}, opti
 	return nil
 }
 
-func FindAll(col *mongo.Collection, filter interface{}, result interface{}, options ...*options.FindOptions) error {
-	ctx, cancel := context.WithTimeout(context.Background(), DefaultReadWriteTimeout)
-	defer cancel()
-
+// 查找多条数据
+func FindAll(ctx context.Context, col *mongo.Collection, filter interface{}, result interface{}, options ...*options.FindOptions) error {
 	if filter == nil {
 		filter = bson.M{}
 	}
@@ -89,4 +79,38 @@ func FindAll(col *mongo.Collection, filter interface{}, result interface{}, opti
 	}
 
 	return nil
+}
+
+// 分段获取数据
+func FindScan(ctx context.Context, col *mongo.Collection, cur, size int64, filter interface{}, result interface{}, fn ...func(opts *options.FindOptions) *options.FindOptions) *Scan {
+	if filter == nil {
+		filter = bson.M{}
+	}
+
+	var scan = new(Scan)
+
+	count, err := col.CountDocuments(ctx, filter)
+	if err != nil {
+		return scan
+	}
+
+	scan = NewScan(count, cur, size)
+
+	if count > 0 {
+		opts := scan.FindOptions()
+		if len(fn) > 0 && fn[0] != nil {
+			opts = fn[0](opts)
+		}
+
+		cur, err := col.Find(ctx, filter, opts)
+		if err != nil {
+			return scan
+		}
+
+		if err := cur.All(ctx, result); err != nil {
+			return scan
+		}
+	}
+
+	return scan
 }
