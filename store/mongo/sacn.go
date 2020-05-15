@@ -11,7 +11,7 @@ const (
 )
 
 type Scan struct {
-	Cur    int64 `json:"page"`  // 当前页数
+	Cur    int64 `json:"cur"`   // 当前页数
 	Count  int64 `json:"count"` // 总数量
 	Size   int64 `json:"size"`  // 每页大小
 	Offset int64 `json:"-"`     // 跳过
