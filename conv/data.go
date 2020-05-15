@@ -2,6 +2,7 @@ package conv
 
 import (
 	"encoding/json"
+	"strings"
 )
 
 // ToJson 转换为JSON数据
@@ -25,4 +26,10 @@ func Slice(v interface{}) []interface{} {
 		return res
 	}
 	return nil
+}
+
+// 下划线转驼峰
+func ToTitle(str string) string {
+	str = strings.Replace(str, "_", " ", -1)
+	return strings.Replace(strings.Title(str), " ", "", -1)
 }
