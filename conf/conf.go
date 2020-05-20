@@ -28,7 +28,7 @@ type Conf struct {
 	sync.RWMutex
 	config config.Config
 	source map[string]*Model
-	data   map[string]interface{}
+	data   interface{}
 }
 
 func (c *Conf) C() config.Config {
@@ -54,7 +54,7 @@ func (c *Conf) SetSource(rows []interface{}) {
 	}
 }
 
-func (c *Conf) Data() map[string]interface{} {
+func (c *Conf) Data() interface{} {
 	c.RLock()
 	defer c.RUnlock()
 
@@ -71,132 +71,12 @@ func (c *Conf) Model(field string) *Model {
 	return nil
 }
 
-func (c *Conf) Get(field string) interface{} {
-	c.RLock()
-	defer c.RUnlock()
-
-	if v, ok := c.data[field]; ok {
-		return v
-	}
-	return nil
-}
-
 func (c *Conf) Set(field string, value interface{}) {
 	c.Lock()
 	defer c.Unlock()
 
-	c.data[field] = value
 	c.config.Set(value, field)
-}
-
-func (c *Conf) Bool(field string) bool {
-	c.RLock()
-	defer c.RUnlock()
-
-	if v, ok := c.data[field]; ok {
-		return v.(bool)
-	}
-	return false
-}
-
-func (c *Conf) Str(field string) string {
-	c.RLock()
-	defer c.RUnlock()
-
-	if v, ok := c.data[field]; ok {
-		return v.(string)
-	}
-	return ""
-}
-
-func (c *Conf) Int(field string) int {
-	c.RLock()
-	defer c.RUnlock()
-
-	if v, ok := c.data[field]; ok {
-		return v.(int)
-	}
-	return 0
-}
-
-func (c *Conf) Int32(field string) int32 {
-	c.RLock()
-	defer c.RUnlock()
-
-	if v, ok := c.data[field]; ok {
-		return v.(int32)
-	}
-	return 0
-}
-
-func (c *Conf) Int64(field string) int64 {
-	c.RLock()
-	defer c.RUnlock()
-
-	if v, ok := c.data[field]; ok {
-		return v.(int64)
-	}
-	return 0
-}
-
-func (c *Conf) Float32(field string) float32 {
-	c.RLock()
-	defer c.RUnlock()
-
-	if v, ok := c.data[field]; ok {
-		return v.(float32)
-	}
-	return 0
-}
-
-func (c *Conf) Float64(field string) float64 {
-	c.RLock()
-	defer c.RUnlock()
-
-	if v, ok := c.data[field]; ok {
-		return v.(float64)
-	}
-	return 0
-}
-
-func (c *Conf) SliceStr(field string) []string {
-	c.RLock()
-	defer c.RUnlock()
-
-	if v, ok := c.data[field]; ok {
-		return v.([]string)
-	}
-	return nil
-}
-
-func (c *Conf) SliceInt(field string) []int {
-	c.RLock()
-	defer c.RUnlock()
-
-	if v, ok := c.data[field]; ok {
-		return v.([]int)
-	}
-	return nil
-}
-
-func (c *Conf) SliceInt32(field string) []int32 {
-	c.RLock()
-	defer c.RUnlock()
-
-	if v, ok := c.data[field]; ok {
-		return v.([]int32)
-	}
-	return nil
-}
-
-func (c *Conf) SliceInt64(field string) []int64 {
-	c.RLock()
-	defer c.RUnlock()
-
-	if v, ok := c.data[field]; ok {
-		return v.([]int64)
-	}
-	return nil
+	_ = c.config.Scan(c.data)
 }
 
 // 载入web配置
@@ -221,7 +101,7 @@ func (c *Conf) LoadDB(ctx context.Context, col *mongo.Collection) error {
 		return err
 	}
 
-	if err := c.config.Scan(&c.data); err != nil {
+	if err := c.config.Scan(c.data); err != nil {
 		return err
 	}
 
@@ -278,11 +158,11 @@ func (c *Conf) Reset(ctx context.Context, col *mongo.Collection, field string) (
 }
 
 // NewConf ...
-func NewConf() *Conf {
+func NewConf(data interface{}) *Conf {
 	c, _ := config.NewConfig()
 	return &Conf{
 		config: c,
 		source: make(map[string]*Model),
-		data:   make(map[string]interface{}),
+		data:   data,
 	}
 }
