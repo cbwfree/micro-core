@@ -29,7 +29,7 @@ var (
 )
 
 // 转换模型数据为对应类型数据
-func convert(t string, v string) interface{} {
+func Convert(t string, v string) interface{} {
 	switch t {
 	case "bool":
 		return conv.Bool(v)
@@ -71,7 +71,7 @@ func convert(t string, v string) interface{} {
 func toDataJson(rows []*Model) []byte {
 	var data = make(map[string]interface{})
 	for _, row := range rows {
-		data[row.Field] = convert(row.Type, row.Value)
+		data[row.Field] = Convert(row.Type, row.Value)
 	}
 	b, _ := json.Marshal(data)
 	return b

@@ -252,29 +252,29 @@ func (c *Conf) Update(ctx context.Context, col *mongo.Collection, field string, 
 		return err
 	}
 
-	c.Set(field, convert(model.Type, value))
+	c.Set(field, Convert(model.Type, value))
 
 	return nil
 }
 
 // 重置配置
-func (c *Conf) Reset(ctx context.Context, col *mongo.Collection, field string) error {
+func (c *Conf) Reset(ctx context.Context, col *mongo.Collection, field string) (*Model, error) {
 	model := c.Model(field)
 	if model == nil {
-		return ErrNotFound
+		return nil, ErrNotFound
 	}
 
 	opts := options.Update().SetUpsert(true)
 	if _, err := col.UpdateOne(ctx, bson.M{"field": field}, bson.M{"$set": model}, opts); err != nil {
 		if err == mongo.ErrNoDocuments {
-			return ErrInvalid
+			return nil, ErrInvalid
 		}
-		return err
+		return nil, err
 	}
 
-	c.Set(field, convert(model.Type, model.Value))
+	c.Set(field, Convert(model.Type, model.Value))
 
-	return nil
+	return model, nil
 }
 
 // NewConf ...
