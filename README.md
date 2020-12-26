@@ -1,5 +1,8 @@
 # micro-core
 
+此项目已废弃, 请查看新版框架
+[https://github.com/cbwfree/micro-game](https://github.com/cbwfree/micro-game)
+
 ## Example
 
 ```go
